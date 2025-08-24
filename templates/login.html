@@ -1,0 +1,71 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<div class="login-container">
+    <h2>Đăng nhập</h2>
+    <form class="login-form" id="loginForm" autocomplete="off">
+        <input type="text" id="username" placeholder="Tên đăng nhập" required autocomplete="off">
+        <input type="password" id="password" placeholder="Mật khẩu" required autocomplete="off">
+        <button type="submit">Đăng nhập</button>
+        <div class="login-message" id="message"></div>
+    </form>
+</div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const messageEl = document.getElementById("message");
+
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        const response = await fetch("/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        try {
+            const result = await response.json();
+
+            if (response.ok) {
+                messageEl.style.color = "green";
+                messageEl.textContent = result.msg || "Đăng nhập thành công!";
+
+                // ✅ Hiện thông báo 1 giây rồi xóa form
+                setTimeout(() => {
+                    usernameInput.value = "";
+                    passwordInput.value = "";
+                    messageEl.textContent = "";
+
+                    // ✅ Chuyển hướng sau khi xóa form
+                    if (result.redirect) {
+                        window.location.href = result.redirect;
+                    }
+                }, 1000);
+            } else {
+                messageEl.style.color = "red";
+                messageEl.textContent = result.msg || "Đăng nhập thất bại";
+            }
+        } catch (error) {
+            messageEl.style.color = "red";
+            messageEl.textContent = "Lỗi kết nối đến máy chủ.";
+            console.error(error);
+        }
+    });
+
+    // ✅ Xóa dữ liệu form khi tải lại trang (chống back giữ lại dữ liệu)
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted || window.performance.navigation.type === 2) {
+            document.getElementById("loginForm").reset();
+        }
+    });
+</script>
+
+{% endblock %}

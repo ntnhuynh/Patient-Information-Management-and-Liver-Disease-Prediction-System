@@ -1,0 +1,83 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="patient-update-wrapper">
+    <h2 class="patient-update-title">✏️ Cập nhật thông tin bệnh nhân {{ patient_id }}</h2>
+
+    <form id="patient-update-form" class="patient-update-form">
+        <!-- Nội dung form sẽ được render bằng JS -->
+    </form>
+
+    <div class="patient-update-actions">
+        <button type="submit" form="patient-update-form" class="patient-update-btn">💾 Lưu thay đổi</button>
+        {%if page_type == "department head"%}
+        <a href="/patients/{{ khoa_id }}/staff" class="patient-update-btn patient-update-back">⬅ Quay lại danh sách</a>
+        {%elif page_type == "doctor"%}
+        <a href="/patients_by_doctor/{{user_id}}/staff" class="patient-update-btn patient-update-back">⬅ Quay lại danh
+            sách</a>
+        {%endif%}
+    </div>
+
+    <script>
+        const patientId = {{ patient_id }};
+        const form = document.getElementById("patient-update-form");
+
+        function safe(val) {
+            return val !== null && val !== undefined ? val : "";
+        }
+
+        function input(label, name, value = "", type = "text") {
+            return `
+        <div class="patient-update-field">
+          <label><strong>${label}:</strong></label>
+          <input type="${type}" name="${name}" value="${value}" class="patient-update-input">
+        </div>
+      `;
+        }
+
+        fetch(`/patient/detail/${patientId}`)  // Bạn cần tạo route GET này nếu chưa có
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    form.innerHTML = `<p style="color:red;">${data.error}</p>`;
+                    return;
+                }
+
+                const patient = data.patient || data;  // Tùy theo cấu trúc JSON bạn trả về
+
+                let html = "";
+                html += input("Họ tên", "name", safe(patient.name));
+                html += input("Ngày sinh", "birth_date", safe(patient.birth_date), "date");
+                html += input("Giới tính", "gender", safe(patient.gender));
+                html += input("Địa chỉ", "address", safe(patient.address));
+
+                form.innerHTML = html;
+            });
+
+        form.onsubmit = function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const jsonData = {};
+
+            formData.forEach((val, key) => {
+                if (val !== "") jsonData[key] = val;
+            });
+
+            fetch(`/patient/update/${patientId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(jsonData)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message) {
+                        alert("✅ Cập nhật thành công!");
+                        window.location.href = `/patients_by_doctor/{{user_id}}/staff`;
+                    } else {
+                        alert("❌ " + (data.error || "Lỗi không xác định"));
+                    }
+                });
+        };
+    </script>
+</div>
+{% endblock %}

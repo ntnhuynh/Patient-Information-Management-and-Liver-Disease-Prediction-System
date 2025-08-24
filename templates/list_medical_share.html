@@ -1,0 +1,63 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="medical-share-wrapper">
+    <h2 class="medical-share-title">📂 Hồ sơ được chia sẻ</h2>
+
+    <div id="medical-share-list" class="medical-share-list">
+        <p>Đang tải danh sách hồ sơ...</p>
+    </div>
+
+    <div class="medical-share-actions">
+        <a href="/admin/dashboard" class="medical-share-btn medical-share-back">⬅ Quay lại trang chủ</a>
+    </div>
+
+    <script>
+        const userId = {{ user_id }};
+        const container = document.getElementById("medical-share-list");
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "—";
+            const parts = dateStr.split("-");
+            if (parts.length !== 3) return "—";
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        fetch(`/medical-record/shared-records/${userId}`)
+            .then(res => res.json())
+            .then(data => {
+                const ids = data.record_ids || [];
+                if (ids.length === 0) {
+                    container.innerHTML = "<p>Không có hồ sơ nào được chia sẻ.</p>";
+                    return;
+                }
+
+                Promise.all(ids.map(id => fetch(`/medical-record/get_medical-records/${id}`).then(r => r.json())))
+                    .then(records => {
+                        let html = "";
+                        records.forEach(record => {
+                            if (record.error) return;
+
+                            html += `
+                                <div class="medical-share-card">
+                                    <h3>🧾 Hồ sơ ${record.id}</h3>
+                                    <p><strong>Bệnh nhân:</strong> ${record.name} (${record.gender})</p>
+                                    <p><strong>Ngày sinh:</strong> ${formatDate(record.birth_date)}</p>
+                                    <p><strong>Ngày khám:</strong> ${formatDate(record.visit_date)}</p>
+                                    <p><strong>Lý do khám:</strong> ${record.reason_for_visit || "—"}</p>
+                                    <p><strong>Chẩn đoán:</strong> ${record.confirmed_diagnosis || "—"}</p>
+                                    <p><strong>Bác sĩ tạo:</strong> ${record.created_by}</p>
+                                    <a href="/medical-records_detail/${record.id}" class="medical-share-detail-btn">
+                                    <img src="/static/img/people.png" alt="avatar" class="detail-avatar">
+                                    <span>Xem chi tiết hồ sơ</span>
+                                    </a>
+                                </div>
+                                `;
+
+                        });
+                        container.innerHTML = html;
+                    });
+            });
+    </script>
+</div>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="create-department-container">
+    <h2>Tạo khoa mới</h2>
+    <form class="create-department-form" id="createDepartmentForm" autocomplete="off">
+        <input type="text" id="departmentName" placeholder="Tên khoa" required>
+        <button type="submit">Tạo khoa</button>
+        <div class="department-message" id="message"></div>
+    </form>
+
+    <hr>
+
+    <div class="department-list">
+        <h3>Danh sách các khoa hiện có</h3>
+        <ul id="departmentList" class="department-list-items">
+            <li>Đang tải danh sách khoa...</li>
+        </ul>
+
+    </div>
+</div>
+
+<script>
+    async function fetchDepartments() {
+        const listEl = document.getElementById("departmentList");
+        listEl.innerHTML = "";
+
+        try {
+            const response = await fetch("/department/list");
+            const departments = await response.json();
+
+            if (Array.isArray(departments) && departments.length > 0) {
+                departments.forEach(dept => {
+                    const li = document.createElement("li");
+                    li.classList.add("department-item");
+
+                    const nameSpan = document.createElement("span");
+                    nameSpan.textContent = dept.name;
+
+                    // Tạo nút Thống kê
+                    const statsBtn = document.createElement("a");
+                    statsBtn.href = `/stats/khoa/${dept.id}/view`;
+                    statsBtn.className = "btn btn-stats";
+                    statsBtn.innerHTML = `<i class="fas fa-chart-bar"></i> Thống kê`;
+
+                    // Tạo nút Nhân sự
+                    const staffBtn = document.createElement("a");
+                    staffBtn.href = `/departments/${dept.id}/staff`;
+                    staffBtn.className = "btn btn-staff";
+                    staffBtn.innerHTML = `<i class="fas fa-users"></i> Nhân sự`;
+
+                    // Tạo nút Bệnh nhân
+                    const patientBtn = document.createElement("a");
+                    patientBtn.href = `/patients/${dept.id}/staff`;
+                    patientBtn.className = "btn btn-patient";
+                    patientBtn.innerHTML = `<i class="fas fa-users"></i> Bệnh nhân`;
+
+                    // Gói hai nút vào một div
+                    const btnGroup = document.createElement("div");
+                    btnGroup.className = "btn-group-actions";
+                    btnGroup.appendChild(statsBtn);
+                    btnGroup.appendChild(staffBtn);
+                    btnGroup.appendChild(patientBtn);
+                    // Gắn vào li
+                    li.appendChild(nameSpan);
+                    li.appendChild(btnGroup);
+                    listEl.appendChild(li);
+                });
+            } else {
+                const li = document.createElement("li");
+                li.textContent = "Chưa có khoa nào.";
+                listEl.appendChild(li);
+            }
+        } catch (error) {
+            const li = document.createElement("li");
+            li.textContent = "Không thể tải danh sách khoa.";
+            listEl.appendChild(li);
+            console.error(error);
+        }
+    }
+
+
+    document.getElementById("createDepartmentForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const nameInput = document.getElementById("departmentName");
+        const messageEl = document.getElementById("message");
+        const name = nameInput.value.trim();
+
+        if (!name) {
+            messageEl.style.color = "red";
+            messageEl.textContent = "Vui lòng nhập tên khoa.";
+            return;
+        }
+
+        try {
+            const response = await fetch("/department/create_dp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ name })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                messageEl.style.color = "green";
+                messageEl.textContent = result.message || "Tạo khoa thành công!";
+                fetchDepartments(); //  Cập nhật danh sách mới
+
+                setTimeout(() => {
+                    nameInput.value = "";
+                    messageEl.textContent = "";
+                }, 1000);
+            } else {
+                messageEl.style.color = "red";
+                messageEl.textContent = result.error || "Tạo khoa thất bại.";
+            }
+        } catch (error) {
+            messageEl.style.color = "red";
+            messageEl.textContent = "Lỗi kết nối đến máy chủ.";
+            console.error(error);
+        }
+    });
+
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted || window.performance.navigation.type === 2) {
+            document.getElementById("createDepartmentForm").reset();
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", fetchDepartments);
+</script>
+{% endblock %}

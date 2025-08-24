@@ -1,0 +1,135 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="medical_edit-wrapper">
+    <h2 class="medical_edit-title">✏️ Chỉnh sửa hồ sơ bệnh án {{ record_id }}</h2>
+
+    <form id="medical_edit-form" class="medical_edit-form">
+        <!-- Nội dung form sẽ được render bằng JS -->
+    </form>
+
+    <div class="medical_edit-actions">
+        <button type="submit" form="medical_edit-form" class="medical_edit-btn">💾 Lưu thay đổi</button>
+        <button onclick="window.history.back()" class="btn-back">⬅ Quay về</button>
+    </div>
+
+    <script>
+        const recordId = {{ record_id }};
+        const form = document.getElementById("medical_edit-form");
+
+        function safe(val) {
+            return val !== null && val !== undefined ? val : "";
+        }
+
+        function input(label, name, value = "", type = "text") {
+            return `
+        <div class="medical_edit-field">
+          <label><strong>${label}:</strong></label>
+          <input type="${type}" name="${name}" value="${value}" class="medical_edit-input">
+        </div>
+      `;
+        }
+
+        function textarea(label, name, value = "") {
+            return `
+        <div class="medical_edit-field">
+          <label><strong>${label}:</strong></label>
+          <textarea name="${name}" class="medical_edit-textarea">${value}</textarea>
+        </div>
+      `;
+        }
+
+        fetch(`/medical-record/get_medical-records/${recordId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    form.innerHTML = `<p style="color:red;">${data.error}</p>`;
+                    return;
+                }
+
+                let html = `
+          <h3>Thông tin chung</h3>
+          ${input("Ngày khám", "visit_date", safe(data.visit_date), "date")}
+          ${input("Lý do khám", "reason_for_visit", safe(data.reason_for_visit))}
+          ${input("Triệu chứng chính", "main_symptoms", safe(data.main_symptoms))}
+          ${input("Thời điểm khởi phát", "onset_time", safe(data.onset_time))}
+          ${input("Ghi chú", "progress_note", safe(data.progress_note))}
+
+          <div class="medical_edit-flexbox">
+            <div class="medical_edit-column">
+              <h3>Khám lâm sàng</h3>
+              ${input("Huyết áp", "blood_pressure", safe(data.blood_pressure))}
+              ${input("Nhịp tim", "heart_rate", safe(data.heart_rate))}
+              ${input("Nhiệt độ", "temperature", safe(data.temperature))}
+              ${input("Nhịp thở", "respiratory_rate", safe(data.respiratory_rate))}
+              ${input("Cân nặng", "weight", safe(data.weight))}
+              ${input("Chiều cao", "height", safe(data.height))}
+              ${input("Tim mạch", "exam_cardio", safe(data.exam_cardio))}
+              ${input("Hô hấp", "exam_respiratory", safe(data.exam_respiratory))}
+              ${input("Tiêu hóa", "exam_digestive", safe(data.exam_digestive))}
+              ${input("Thần kinh", "exam_neuro", safe(data.exam_neuro))}
+              ${input("Da liễu", "exam_skin", safe(data.exam_skin))}
+            </div>
+
+            <div class="medical_edit-column">
+              <h3>Cận lâm sàng</h3>
+              ${textarea("Chỉ định", "orders", safe(data.orders))}
+              ${textarea("Tóm tắt kết quả", "result_summary", safe(data.result_summary))}
+              ${input("Tổng Bilirubin", "total_bilirubin", safe(data.total_bilirubin))}
+              ${input("Bilirubin trực tiếp", "direct_bilirubin", safe(data.direct_bilirubin))}
+              ${input("Alkaline Phosphotase", "alkaline_phosphotase", safe(data.alkaline_phosphotase))}
+              ${input("ALT", "alamine_aminotransferase", safe(data.alamine_aminotransferase))}
+              ${input("AST", "aspartate_aminotransferase", safe(data.aspartate_aminotransferase))}
+              ${input("Tổng Protein", "total_proteins", safe(data.total_proteins))}
+              ${input("Albumin", "albumin", safe(data.albumin))}
+              ${input("Tỷ lệ Albumin/Globulin", "albumin_globulin_ratio", safe(data.albumin_globulin_ratio))}
+            </div>
+          </div>
+
+          <h3>Chẩn đoán & Điều trị</h3>
+          ${input("Chẩn đoán sơ bộ", "preliminary_diagnosis", safe(data.preliminary_diagnosis))}
+          ${input("Chẩn đoán xác định", "confirmed_diagnosis", safe(data.confirmed_diagnosis))}
+          ${textarea("Thuốc", "medications", safe(data.medications))}
+          ${textarea("Thủ thuật", "procedures", safe(data.procedures))}
+          ${textarea("Hướng dẫn theo dõi", "follow_up_instructions", safe(data.follow_up_instructions))}
+          ${input("Ngày tái khám", "follow_up_date", safe(data.follow_up_date), "date")}
+
+          <h3>Xuất viện</h3>
+          ${input("Ngày nhập viện", "admission_date", safe(data.admission_date), "date")}
+          ${input("Ngày xuất viện", "discharge_date", safe(data.discharge_date), "date")}
+          ${input("Chẩn đoán khi xuất viện", "discharge_diagnosis", safe(data.discharge_diagnosis))}
+          ${input("Kết quả điều trị", "treatment_outcome", safe(data.treatment_outcome))}
+          ${textarea("Hướng dẫn sau xuất viện", "post_discharge_instructions", safe(data.post_discharge_instructions))}
+        `;
+
+                form.innerHTML = html;
+            });
+
+        form.onsubmit = function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const jsonData = {};
+            formData.forEach((val, key) => {
+                if (val !== null && val !== undefined && val !== "") {
+                    jsonData[key] = val;
+                }
+            });
+
+            fetch(`/medical-record/update_medical-records/${recordId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(jsonData)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message) {
+                        alert("✅ Hồ sơ đã được cập nhật!");
+                        window.location.href = `/medical-records_detail/${recordId}`;
+                    } else {
+                        alert("❌ " + (data.error || "Lỗi không xác định"));
+                    }
+                });
+        };
+    </script>
+</div>
+{% endblock %}

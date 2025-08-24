@@ -1,0 +1,5 @@
+Flask-SQLAlchemy	3.1.1
+Flask-Mail	        0.9.1
+Flask	            3.1.1
+Joblib	            1.5.1
+Numpy	            2.3.2

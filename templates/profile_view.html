@@ -1,0 +1,56 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="profile-wrapper">
+    <h2 class="profile-title">Thông tin hồ sơ</h2>
+
+    <div id="profileData" class="profile-card">Đang tải...</div>
+
+    <div class="profile-actions">
+        <a href="/admin/dashboard" class="btn back-btn"><i class="fas fa-arrow-left"></i> Quay về</a>
+        <a href="/profile/update" class="btn update-btn"><i class="fas fa-edit"></i> Cập nhật hồ sơ</a>
+    </div>
+</div>
+
+
+<script>
+    async function loadProfile() {
+        try {
+            const res = await fetch("/auth/profile");
+
+            if (!res.ok) throw new Error("Không thể tải hồ sơ");
+
+            const user = await res.json();
+            let roleLabel = "";
+            switch (user.role) {
+                case "director":
+                    roleLabel = "Giám đốc";
+                    break;
+                case "department head":
+                    roleLabel = "Trưởng khoa";
+                    break;
+                case "doctor":
+                    roleLabel = "Bác sĩ";
+                    break;
+                case "nurse":
+                    roleLabel = "Y tá";
+                    break;
+                default:
+                    roleLabel = user.role;
+            }
+            document.getElementById("profileData").innerHTML = `
+            <p><strong>Họ tên:</strong> ${user.full_name}</p>
+            <p><strong>Email:</strong> ${user.email}</p>
+            <p><strong>Giới tính:</strong> ${user.gender}</p>
+            <p><strong>Ngày sinh:</strong> ${user.birth_date}</p>
+            <p><strong>Vai trò:</strong> ${roleLabel}</p>
+        `;
+        } catch (err) {
+            document.getElementById("profileData").innerText = "Lỗi khi tải hồ sơ.";
+        }
+    }
+
+    loadProfile();
+</script>
+
+{% endblock %}

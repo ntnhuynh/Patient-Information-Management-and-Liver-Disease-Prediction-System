@@ -1,0 +1,13 @@
+<!-- templates/layout/header_index.html -->
+<div class="header">
+    <meta charset="UTF-8">
+    <title>Đăng Ký</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/png">
+    <img src="{{ url_for('static', filename='img/hospital.png') }}" alt="Logo bệnh viện">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <div class="auth-buttons">
+        <!-- <a href="/register"><i class="fas fa-user-plus"></i> Đăng ký</a> -->
+        <a href="/login"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
+    </div>
+</div>

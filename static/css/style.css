@@ -1,0 +1,2008 @@
+/* static/css/style.css */
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #ecf0f1;
+}
+
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000000;
+    padding: 10px 30px;
+    color: white;
+}
+
+.header img {
+    height: 50px;
+}
+
+.auth-buttons a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.auth-buttons a:hover {
+    text-decoration: underline;
+}
+
+
+.register-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+#registerForm input,
+#registerForm select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+}
+
+.select-group {
+    display: flex;
+    gap: 10px;
+}
+
+.select-group select {
+    flex: 1;
+}
+
+#registerForm button {
+    width: 100%;
+    padding: 12px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#registerForm button:hover {
+    background-color: #2980b9;
+}
+
+#message {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#message.success {
+    color: green;
+}
+
+#message.error {
+    color: red;
+}
+
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.error-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 6px;
+    visibility: hidden;
+    cursor: pointer;
+}
+
+
+.error-icon::before {
+    content: "!";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    font-size: 12px;
+    color: #000;
+}
+
+
+.error-icon::after {
+    content: attr(data-error);
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    color: #333;
+    padding: 6px 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.error-icon:hover::after {
+    opacity: 1;
+}
+
+
+/* Đăng nhập */
+.login-container {
+    max-width: 400px;
+    margin: 60px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+    background-color: #2980b9;
+}
+
+.login-message {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.login-message.success {
+    color: green;
+}
+
+.login-message.error {
+    color: red;
+}
+
+/* admin dashboard */
+.dashboard-wrapper {
+    max-width: 900px;
+    margin: 10px auto;
+    padding: 20px;
+    background-color: #f1efef;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(233, 167, 167, 0.682);
+}
+
+.dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(2, 0.8fr);
+    grid-template-rows: auto auto;
+    gap: 30px;
+    justify-items: center;
+    align-items: start;
+}
+
+.dashboard-container h2 {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    width: 100%;
+    max-width: 350px;
+    max-height: 150px;
+    background-color: #fdfdfd;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.stat-card p {
+    font-size: 26px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Khối thứ ba nằm giữa */
+.stat-card:nth-child(4) {
+    grid-column: 1 / -1;
+    justify-self: center;
+}
+
+.admin_dashboard-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+
+/* header admin */
+/* Sidebar trái */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -220px;
+    width: 200px;
+    height: 100%;
+    background-color: #000;
+    color: white;
+    padding-top: 20px;
+    /* Giảm từ 60px xuống 20px */
+    transition: left 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar .close-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    /* Giảm margin để xích lên */
+}
+
+.sidebar ul li {
+    padding: 12px 20px;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
+
+
+/* Header chính */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000;
+    padding: 10px 30px;
+    color: white;
+}
+
+.nav-toggle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+}
+
+/* User nav */
+.user-nav-group {
+    position: relative;
+}
+
+/* Icon người dùng */
+.user-info-icon {
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+}
+
+/* Menu mở rộng */
+.user-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    color: #333;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: none;
+    min-width: 180px;
+    z-index: 1000;
+}
+
+.user-menu.active {
+    display: block;
+}
+
+.user-details {
+    padding: 12px 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+}
+
+.user-dropdown {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.user-dropdown li {
+    padding: 10px 20px;
+}
+
+.user-dropdown li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.user-dropdown li a:hover {
+    background-color: #f0f0f0;
+}
+
+/* profile view*/
+.profile-wrapper {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fdfdfd;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.profile-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #444;
+}
+
+.profile-card p {
+    margin: 10px 0;
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.back-btn {
+    background-color: #ccc;
+    color: #333;
+}
+
+.back-btn:hover {
+    background-color: #bbb;
+}
+
+.update-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.update-btn:hover {
+    background-color: #0056b3;
+}
+
+/* profile update */
+.profile_update-wrapper {
+    max-width: 640px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+
+.profile_update-form .profile_update-group {
+    margin-bottom: 20px;
+}
+
+.profile_update-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+}
+
+.profile_update-form input,
+.profile_update-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+}
+
+.profile_update-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile_update-save {
+    background-color: #0078D4;
+    color: white;
+}
+
+.profile_update-save:hover {
+    background-color: #005fa3;
+}
+
+.profile_update-cancel {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.profile_update-cancel:hover {
+    background-color: #c2c2c2;
+}
+
+
+.profile_update-avatar {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    margin-right: 12px;
+    vertical-align: middle;
+}
+
+
+.profile_update-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 24px;
+    margin-bottom: 28px;
+}
+
+/* change password */
+.change_password-wrapper {
+    max-width: 500px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.change_password-form .change_password-group {
+    margin-bottom: 20px;
+}
+
+.change_password-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+}
+
+.change_password-form input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+}
+
+.change_password-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.change_password-save {
+    background-color: #0078D4;
+    color: white;
+}
+
+.change_password-save:hover {
+    background-color: #005fa3;
+}
+
+.change_password-cancel {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.change_password-cancel:hover {
+    background-color: #c2c2c2;
+}
+
+.change_password-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.change_password-avatar {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-bottom: 12px;
+}
+
+.change_password-title {
+    font-size: 24px;
+    color: #0078D4;
+    margin: 0;
+}
+
+/* create department */
+.create-department-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.create-department-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.create-department-form button {
+    padding: 10px 20px;
+    background-color: #0078D4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.create-department-form button:hover {
+    background-color: #005ea2;
+}
+
+.department-message {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.department-list ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.department-list li {
+    padding: 8px 12px;
+    background-color: #e8f0fe;
+    margin-bottom: 6px;
+    border-radius: 6px;
+}
+
+.department-list-items {
+    list-style: none;
+    padding: 0;
+}
+
+.department-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* stats department */
+.stats_department_monthly_container {
+    width: 90%;
+    max-width: none;
+    /* max-width: 900px; */
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.stats_department_monthly_title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+
+}
+
+
+#stats_department_monthly_year_select {
+    padding: 6px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+
+.stats_department_header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    /* căn giữa tiêu đề */
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 12px 0;
+}
+
+.stats_department {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.stats_department img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.stats_department:hover {
+    background-color: #e6f4ea;
+    cursor: pointer;
+}
+
+.stats_department_monthly_title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+}
+
+/* button stats */
+.btn-group-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+/* Nút thống kê */
+.btn-stats {
+    background-color: #007bff;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-stats:hover {
+    background-color: #0056b3;
+}
+
+/* Nút nhân sự */
+.btn-staff {
+    background-color: #17a2b8;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-staff:hover {
+    background-color: #117a8b;
+}
+
+/* Nút bệnh nhân */
+.btn-patient {
+    background-color: #0cbdaf;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-patient:hover {
+    background-color: #0c606d;
+}
+
+/* stats doctor */
+.stats_doctor-wrapper {
+    padding: 24px;
+    background-color: #f4f8fc;
+    border-radius: 8px;
+    max-width: 800px;
+    margin: auto;
+    margin-bottom: 80px;
+}
+
+.stats_doctor-title {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+
+.stats_doctor-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stats_doctor-subtitle {
+    margin-top: 20px;
+    color: #0056b3;
+    font-size: 1.2rem;
+}
+
+.stats_doctor-box {
+    background-color: #e9f5ff;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.stats_doctor-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.stats_doctor-btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: white;
+}
+
+.stats_doctor-back {
+    background-color: #6c757d;
+}
+
+.stats_doctor-btn:hover {
+    opacity: 0.9;
+}
+
+.stats_doctor-empty {
+    color: #888;
+    font-style: italic;
+}
+
+/* add patient */
+
+.add_patient-wrapper {
+    max-width: 720px;
+    margin: 40px auto;
+    background-color: #fefefe;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.add_patient-title {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 24px;
+}
+
+.add_patient-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #34495e;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.add_patient-btn {
+    padding: 12px;
+    background-color: #27ae60;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.add_patient-btn:hover {
+    background-color: #219150;
+}
+
+.add_patient-msg {
+    margin-top: 12px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.add_patient-back img {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin-bottom: 8px;
+}
+
+.add_patient-back img:hover {
+    transform: scale(1.1);
+}
+
+/* dashboard department */
+.department_dashboard-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Grid tổng thể */
+.department_dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto;
+    gap: 20px;
+    justify-items: center;
+    align-items: center;
+    padding: 40px;
+    background-color: #f9f9f9;
+    border: 2px solid #f3cfcf;
+    border-radius: 12px;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.department_dashboard-stat-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.department_dashboard-stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.department_dashboard-stat-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.department_dashboard-stat-card p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+    margin: 0;
+}
+
+.department_dashboard-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Đặt ô thứ ba nằm giữa hai ô đầu */
+.department_dashboard-stats-grid a:nth-child(3) {
+    grid-column: 1 / span 2;
+    justify-self: center;
+}
+
+@media (max-width: 600px) {
+    .department_dashboard-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .department_dashboard-stats-grid a:nth-child(3) {
+        grid-column: auto;
+    }
+}
+
+
+/* thanh tìm kiếm */
+.stats_doctor-search {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.stats_doctor-search-input {
+    padding: 0.5rem 1rem;
+    width: 60%;
+    max-width: 400px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* nút stats patient */
+.stats_doctor-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #000000, #132931);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stats_doctor-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.stats_doctor-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* patient_detail */
+/* Wrapper tổng */
+.patient_detail-wrapper {
+    padding: 24px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Tiêu đề */
+.patient_detail-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+/* Ô tìm kiếm */
+.patient_detail-search {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.patient_detail-search-input {
+    flex: 1;
+    padding: 8px;
+    font-size: 16px;
+}
+
+.patient_detail-add {
+    margin-left: 15px;
+    background-color: #28a745;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.patient_detail-search-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Thông tin bệnh nhân */
+.patient_detail-card {
+    background-color: #fff;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* Bảng hồ sơ */
+.patient_detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(112, 108, 108, 0.762);
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+}
+
+.patient_detail-table th {
+    background-color: #4d88bf;
+    color: #333;
+    text-align: left;
+    padding: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid #ddd;
+}
+
+.patient_detail-table td {
+    padding: 10px;
+    border-bottom: 1px solid #96a6f557;
+}
+
+.patient_detail-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.patient_detail-table td:last-child {
+    border: none;
+    background-color: transparent;
+}
+
+.patient_detail-table th.action-header {
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    width: 120px;
+}
+
+.patient_detail-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.record-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+
+
+.patient_detail-card {
+    background-color: #fefefe;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.patient_detail-card p {
+    margin: 8px 0;
+}
+
+.patient_detail-card strong {
+    display: inline-block;
+    width: 120px;
+    color: #555;
+}
+
+
+
+.patient_detail-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.patient_detail-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    /* Đặt chiều rộng cố định cho cả hai nút */
+    height: 32px;
+    /* Chiều cao đồng đều */
+    background: linear-gradient(135deg, #000000ce, #132931);
+    color: #fff8f8;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.patient_detail-add {
+    width: 120px;
+}
+
+.patient_detail-predict {
+    background: #f0f0f0;
+}
+
+.patient_detail-btn:hover {
+    background-color: #a1a2e8;
+}
+
+.patient_detail-avatar {
+    width: 24px;
+    height: 24px;
+    /* margin-right: 6px; */
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.patient_detail-back {
+    display: inline-block;
+    background-color: #f0f0f0;
+    color: #ffffff;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    width: 150px;
+    /* Đặt chiều rộng cố định cho cả hai nút */
+    height: 25px;
+    /* Chiều cao đồng đều */
+    align-items: normal;
+    justify-content: none;
+}
+
+.patient_detail-back:hover {
+    background-color: #e0e0e0;
+}
+
+/* medical detail */
+
+.medical_records_detail-wrapper {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.medical_records_detail-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.medical_records_detail-card h3 {
+    margin-top: 30px;
+    color: #34495e;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.medical_records_detail-card p {
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.medical_records_detail-card strong {
+    display: inline-block;
+    width: 220px;
+    color: #555;
+}
+
+.medical_records_detail-card span.empty {
+    color: #aaa;
+    font-style: italic;
+}
+
+.medical_records_detail-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.medical_records_detail-btn:hover {
+    background-color: #2980b9;
+}
+
+.medical_records_detail-flexbox {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.medical_records_detail-column {
+    flex: 1 1 45%;
+    min-width: 300px;
+}
+
+.medical_records_detail-column h3 {
+    margin-bottom: 10px;
+    color: #2c3e50;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.medical_records_detail-column p {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+/* medical update */
+.medical_edit-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.medical_edit-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.medical_edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.medical_edit-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #34495e;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.medical_edit-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.medical_edit-input,
+.medical_edit-textarea {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+}
+
+.medical_edit-textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.medical_edit-flexbox {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.medical_edit-column {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.medical_edit-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-start;
+}
+
+.medical_edit-btn {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.medical_edit-btn:hover {
+    background-color: #2980b9;
+}
+
+.medical_edit-back {
+    background-color: #7f8c8d;
+}
+
+.medical_edit-back:hover {
+    background-color: #636e72;
+}
+
+/* update patient */
+.patient-update-wrapper {
+    max-width: 600px;
+    margin: auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.patient-update-title {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.patient-update-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.patient-update-field label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.patient-update-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.patient-update-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+}
+
+.patient-update-btn {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.patient-update-btn:hover {
+    background-color: #2980b9;
+}
+
+.patient-update-back {
+    background-color: #7f8c8d;
+}
+
+.patient-update-back:hover {
+    background-color: #636e72;
+}
+
+/* medical share */
+.medical-share-wrapper {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f9f9fc;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.medical-share-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.medical-share-step {
+    margin-bottom: 20px;
+}
+
+.medical-share-select,
+.medical-share-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.medical-share-input {
+    margin-top: 8px;
+}
+
+.medical-share-doctor-list {
+    margin-top: 15px;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+}
+
+.medical-share-doctor-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.medical-share-doctor-item label {
+    cursor: pointer;
+    font-size: 16px;
+    color: #34495e;
+}
+
+.medical-share-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.medical-share-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.medical-share-btn:hover {
+    background-color: #2980b9;
+}
+
+.medical-share-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+.medical-share-back {
+    background-color: #95a5a6;
+}
+
+.medical-share-back:hover {
+    background-color: #7f8c8d;
+}
+
+.medical-share-detail-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 16px;
+    background-color: #000000;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.medical-share-detail-btn:hover {
+    background-color: #7a7c7d;
+}
+
+.detail-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* depart dashboard */
+.department_dashboard-stat-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* canh giữa theo chiều dọc */
+    align-items: center;
+    /* canh giữa theo chiều ngang */
+    height: 150px;
+    /* hoặc chiều cao bạn mong muốn */
+    text-align: center;
+}
+
+.department_dashboard-stat-card p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* patient-doctor */
+/* Wrapper chính */
+.patients_doctor_staff-wrapper {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fdfdfd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Tiêu đề */
+.patients_doctor_staff-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    text-align: center;
+}
+
+/* Ô tìm kiếm */
+.patients_doctor_staff-search {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.patients_doctor_staff-search-input {
+    width: 60%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* Card danh sách bệnh nhân */
+.patients_doctor_staff-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Box từng bệnh nhân */
+.patients_doctor_staff-box {
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #fff;
+    transition: box-shadow 0.2s ease;
+}
+
+.patients_doctor_staff-box:hover {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Link hành động */
+.patients_doctor_staff-links {
+    margin-top: 10px;
+    display: flex;
+    gap: 15px;
+}
+
+.patients_doctor_staff-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #fdfdfd;
+    font-weight: 500;
+    background-color: #000;
+    padding: 10px 10px;
+    border-radius: 10px;
+}
+
+.patients_doctor_staff-link:hover {
+    text-decoration: underline;
+}
+
+/* Avatar */
+.patients_doctor_staff-avatar {
+    width: 24px;
+    height: 24px;
+}
+
+/* Nút quay lại */
+.patients_doctor_staff-actions {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.patients_doctor_staff-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #000000;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.patients_doctor_staff-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Trạng thái rỗng hoặc lỗi */
+.patients_doctor_staff-empty,
+.patients_doctor_staff-error {
+    text-align: center;
+    font-style: italic;
+    color: #7f8c8d;
+    margin-top: 20px;
+}
+
+/* doctor dashboard */
+.doctor_dashboard-container {
+    background: #fefefe;
+    padding: 80px 80px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 80px auto;
+    text-align: center;
+}
+
+.doctor_dashboard-title {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 50px;
+    color: #222;
+}
+
+.doctor_dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.doctor_dashboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.doctor_dashboard-row.center {
+    justify-content: center;
+}
+
+.doctor_dashboard-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.195);
+    padding: 20px 30px;
+    text-decoration: none;
+    color: #333;
+    width: 280px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.doctor_dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.doctor_dashboard-card h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #222;
+}
+
+.doctor_dashboard-number {
+    font-size: 26px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* predict */
+.predict-container {
+    max-width: 800px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    margin-bottom: 200px;
+}
+
+.predict-header {
+    text-align: center;
+    color: #2c3e50;
+}
+
+.predict-meta {
+    font-size: 0.9em;
+    color: #7f8c8d;
+    margin-bottom: 20px;
+}
+
+.predict-loading {
+    text-align: center;
+    font-weight: bold;
+    color: #2980b9;
+}
+
+.predict-result {
+    background: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.predict-error {
+    color: red;
+    font-weight: bold;
+}
+
+.predict-title,
+.predict-subtitle {
+    color: #34495e;
+}
+
+.predict-patient,
+.predict-labs {
+    list-style: none;
+    padding-left: 0;
+}
+
+.predict-patient li,
+.predict-labs li {
+    margin-bottom: 5px;
+}
+
+.predict-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-back,
+.btn-download {
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #070a0e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.btn-back:hover,
+.btn-download:hover {
+    background-color: #0056b3;
+}
+
+/* download medical detail */
+.medical_records_detail-download {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.medical_records_detail-download:hover {
+    background-color: #218838;
+}
+
+/* footer */
+
+
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    border-top: 1px solid #ddd;
+}
+
+.footer-container {
+    background-color: #f8f9fa;
+    /* padding: 5px 20px; */
+    border-top: 1px solid #ddd;
+    font-size: 14px;
+    color: #333;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.footer-left,
+.footer-right {
+    flex: 1;
+    min-width: 200px;
+    /* margin-bottom: 20px; */
+}
+
+.footer-right .social-icons a {
+    margin-right: 10px;
+    color: #333;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.footer-right .social-icons a:hover {
+    color: #007bff;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: -10px;
+    border-top: 1px solid #ccc;
+    font-size: 13px;
+    color: #666;
+}

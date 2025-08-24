@@ -1,0 +1,137 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="medical_records_detail-wrapper">
+    <h2 class="medical_records_detail-title">📝 Hồ sơ bệnh án {{ record_id }}</h2>
+
+    <div id="medical_records_detail-info" class="medical_records_detail-card">
+        <!-- Nội dung hồ sơ sẽ được render bằng JS -->
+    </div>
+
+    {% if page_type == "department_head_list" %}
+    <div class="medical_records_detail-actions">
+        <button onclick="window.history.back()" class="btn-back">⬅ Quay về</button>
+    </div>
+    <div class="medical_records_detail-actions">
+        <button onclick="downloadMedicalRecord()" class="medical_records_detail-btn medical_records_detail-download">
+            <i class="fas fa-download"></i> Tải hồ sơ về (.txt)
+        </button>
+    </div>
+    {%elif page_type == "doctor"%}
+    <div class="medical_records_detail-actions">
+        <button onclick="window.history.back()" class="btn-back">⬅ Quay về</button>
+    </div>
+    <div class="medical_records_detail-actions">
+        <button onclick="downloadMedicalRecord()" class="medical_records_detail-btn medical_records_detail-download">
+            <i class="fas fa-download"></i> Tải hồ sơ về (.txt)
+        </button>
+    </div>
+    {% else %}
+    <div class="medical_records_detail-actions">
+        <button onclick="window.history.back()" class="btn-back">⬅ Quay về</button>
+    </div>
+    <div class="medical_records_detail-actions">
+        <button onclick="downloadMedicalRecord()" class="medical_records_detail-btn medical_records_detail-download">
+            <i class="fas fa-download"></i> Tải hồ sơ về (.txt)
+        </button>
+    </div>
+    {%endif%}
+
+
+    <script>
+        function safeValue(val) {
+            return val !== null && val !== undefined && val !== "" ? val : "";
+        }
+
+        const recordId = {{ record_id }};
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            if (isNaN(date)) return "—";
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        fetch(`/medical-record/get_medical-records/${recordId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("medical_records_detail-info").innerHTML = `<p style="color:red;">${data.error}</p>`;
+                    return;
+                }
+
+                const infoDiv = document.getElementById("medical_records_detail-info");
+                let html = `
+                    <h3> Thông tin chung</h3>
+                    <p><strong>Ngày khám:</strong> ${formatDate(data.visit_date)}</p>
+                    <p><strong>Lý do khám:</strong> ${safeValue(data.reason_for_visit)}</p>
+                    <p><strong>Triệu chứng chính:</strong> ${safeValue(data.main_symptoms)}</p>
+                    <p><strong>Thời gian khởi phát:</strong> ${safeValue(data.onset_time)}</p>
+                    <p><strong>Ghi chú:</strong> ${safeValue(data.progress_note)}</p>
+
+                    <div class="medical_records_detail-flexbox">
+                        <div class="medical_records_detail-column">
+                            <h3>Khám lâm sàng</h3>
+                            <p><strong>Huyết áp:</strong> ${safeValue(data.blood_pressure)}</p>
+                            <p><strong>Nhịp tim:</strong> ${safeValue(data.heart_rate)}</p>
+                            <p><strong>Nhiệt độ:</strong> ${safeValue(data.temperature)}</p>
+                            <p><strong>Nhịp thở:</strong> ${safeValue(data.respiratory_rate)}</p>
+                            <p><strong>Cân nặng:</strong> ${safeValue(data.weight)}</p>
+                            <p><strong>Chiều cao:</strong> ${safeValue(data.height)}</p>
+                            <p><strong>Tim mạch:</strong> ${safeValue(data.exam_cardio)}</p>
+                            <p><strong>Hô hấp:</strong> ${safeValue(data.exam_respiratory)}</p>
+                            <p><strong>Tiêu hóa:</strong> ${safeValue(data.exam_digestive)}</p>
+                            <p><strong>Thần kinh:</strong> ${safeValue(data.exam_neuro)}</p>
+                            <p><strong>Da liễu:</strong> ${safeValue(data.exam_skin)}</p>
+                        </div>
+
+                        <div class="medical_records_detail-column">
+                            <h3>Cận lâm sàng</h3>
+                            <p><strong>Tổng Bilirubin:</strong> ${safeValue(data.total_bilirubin)}</p>
+                            <p><strong>Bilirubin trực tiếp:</strong> ${safeValue(data.direct_bilirubin)}</p>
+                            <p><strong>Alkaline Phosphotase:</strong> ${safeValue(data.alkaline_phosphotase)}</p>
+                            <p><strong>ALT:</strong> ${safeValue(data.alamine_aminotransferase)}</p>
+                            <p><strong>AST:</strong> ${safeValue(data.aspartate_aminotransferase)}</p>
+                            <p><strong>Tổng Protein:</strong> ${safeValue(data.total_proteins)}</p>
+                            <p><strong>Albumin:</strong> ${safeValue(data.albumin)}</p>
+                            <p><strong>Tỷ lệ Albumin/Globulin:</strong> ${safeValue(data.albumin_globulin_ratio)}</p>
+                            <p><strong>Tóm tắt kết quả:</strong> ${safeValue(data.result_summary)}</p>
+                        </div>
+                    </div>
+                            
+
+                    <h3>Chẩn đoán & Điều trị</h3>
+                    <p><strong>Chẩn đoán sơ bộ:</strong> ${safeValue(data.preliminary_diagnosis)}</p>
+                    <p><strong>Chẩn đoán xác định:</strong> ${safeValue(data.confirmed_diagnosis)}</p>
+                    <p><strong>Thuốc:</strong> ${data.medications ? JSON.stringify(data.medications) : ""}</p>
+                    <p><strong>Thủ thuật:</strong> ${safeValue(data.procedures)}</p>
+                    <p><strong>Hướng dẫn theo dõi:</strong> ${safeValue(data.follow_up_instructions)}</p>
+                    <p><strong>Ngày tái khám:</strong> ${formatDate(safeValue(data.follow_up_date))}</p>
+
+                    <h3>Xuất viện</h3>
+                    <p><strong>Ngày nhập viện:</strong> ${formatDate(safeValue(data.admission_date))}</p>
+                    <p><strong>Ngày xuất viện:</strong> ${formatDate(safeValue(data.discharge_date))}</p>
+                    <p><strong>Chẩn đoán khi xuất viện:</strong> ${safeValue(data.discharge_diagnosis)}</p>
+                    <p><strong>Kết quả điều trị:</strong> ${safeValue(data.treatment_outcome)}</p>
+                    <p><strong>Hướng dẫn sau xuất viện:</strong> ${safeValue(data.post_discharge_instructions)}</p>
+                `;
+                infoDiv.innerHTML = html;
+            })
+            .catch(err => {
+                document.getElementById("medical_records_detail-info").innerHTML = "<p>Lỗi khi tải dữ liệu hồ sơ.</p>";
+                console.error(err);
+            });
+        function downloadMedicalRecord() {
+            const infoDiv = document.getElementById("medical_records_detail-info");
+            const textContent = infoDiv.innerText;
+
+            const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `ho_so_benh_an_${recordId}.txt`;
+            link.click();
+        }
+
+    </script>
+    {% endblock %}

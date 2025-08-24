@@ -1,0 +1,55 @@
+<div class="main-header">
+    <meta charset="UTF-8">
+    <title>Trang chủ</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Sidebar trái -->
+    <div class="sidebar" id="sidebar">
+        <button class="nav-toggle close-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul>
+            <li><a href="/admin/dashboard">Trang chủ</a></li>
+        </ul>
+    </div>
+
+    <!-- Header chính -->
+    <div class="header-content">
+        <div class="nav-left-group">
+            <button class="nav-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="user-nav-group">
+            <div class="user-info-icon" onclick="toggleUserMenu()">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-menu" id="userMenu">
+                <div class="user-details">
+                    <span class="username">{{ username }}</span>
+                </div>
+                <ul class="user-dropdown">
+                    <li><a href="/profile/view">Hồ sơ</a></li>
+                    <li><a href="/change-password">Đổi mật khẩu</a></li>
+                    <li><a href="/logout" id="logout-btn">Đăng xuất</a></li>
+
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            sidebar?.classList.toggle("active");
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById("userMenu");
+            menu?.classList.toggle("active");
+        }
+    </script>

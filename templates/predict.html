@@ -1,0 +1,78 @@
+{% extends "layout/base.html" %}
+
+
+{% block content %}
+<div class="predict-container">
+    <h1 class="predict-header">Dự đoán bệnh gan bằng AI</h1>
+    <p class="predict-meta">
+        Người dùng: {{ full_name }} |
+        Vai trò: {{ vaitro }} |
+        Ngày: {{ current_date }}
+    </p>
+
+    <div class="predict-loading" style="display:none;">🔄 Đang xử lý dự đoán...</div>
+    <div class="predict-result"></div>
+    <div class="predict-actions">
+        <button onclick="window.history.back()" class="btn-back">⬅️ Quay về</button>
+        <button onclick="downloadResult()" class="btn-download">📄 Tải đơn kết quả</button>
+    </div>
+
+</div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const resultBox = document.querySelector(".predict-result");
+        const loadingBox = document.querySelector(".predict-loading");
+
+        loadingBox.style.display = "block";
+
+        fetch(`/patient/predict/{{record_id}}`)
+            .then(res => res.json())
+            .then(data => {
+                loadingBox.style.display = "none";
+
+                if (data.error) {
+                    resultBox.innerHTML = `<div class="predict-error">❌ ${data.error}</div>`;
+                    return;
+                }
+
+                const info = data.patient_info;
+                const labs = data.lab_values;
+
+                resultBox.innerHTML = `
+                    <h2 class="predict-title">Kết quả dự đoán</h2>
+                    <p><strong>Dự đoán:</strong> ${data.prediction}</p>
+                    <hr>
+                    <h3 class="predict-subtitle">Thông tin bệnh nhân</h3>
+                    <ul class="predict-patient">
+                        <li>Họ tên: ${info.full_name}</li>
+                        <li>Giới tính: ${info.gender}</li>
+                        <li>Tuổi: ${info.age}</li>
+                        <li>Ngày sinh: ${info.birth_date}</li>
+                    </ul>
+                    <hr>
+                    <h3 class="predict-subtitle">Chỉ số xét nghiệm</h3>
+                    <ul class="predict-labs">
+                        ${Object.entries(labs).map(([key, val]) => `<li>${key}: ${val}</li>`).join("")}
+                    </ul>
+                `;
+            })
+            .catch(err => {
+                loadingBox.style.display = "none";
+                resultBox.innerHTML = `<div class="predict-error">⚠️ Lỗi khi gọi API: ${err}</div>`;
+            });
+    });
+    function downloadResult() {
+        const resultBox = document.querySelector(".predict-result");
+        const textContent = resultBox.innerText;
+
+        const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "du_doan_benh_gan.txt";
+        link.click();
+    }
+
+</script>
+{% endblock %}

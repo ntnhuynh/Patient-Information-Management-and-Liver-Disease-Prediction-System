@@ -1,0 +1,79 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="stats_doctor-wrapper">
+    <h2 class="stats_doctor-title">Thông tin nhân sự khoa</h2>
+
+    <div id="stats_doctor-data" class="stats_doctor-card">Đang tải dữ liệu...</div>
+
+    <div class="stats_doctor-actions">
+        <a href="/create/department" class="stats_doctor-btn stats_doctor-back">
+            <i class="fas fa-arrow-left"></i> Quay về
+        </a>
+    </div>
+</div>
+
+<script>
+    async function loadStaff() {
+        try {
+            const pathParts = window.location.pathname.split('/');
+            const khoaId = pathParts[pathParts.indexOf('departments') + 1];
+
+            const res = await fetch(`/stats/departments/${khoaId}/staff`);
+            const container = document.getElementById("stats_doctor-data");
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                container.innerHTML = `<p class="stats_doctor-error">❌ ${errorData.error || "Lỗi không xác định."}</p>`;
+                return;
+            }
+
+            const data = await res.json();
+            let html = `<p><strong>Tên khoa:</strong> ${data.ten_khoa}</p>`;
+
+            if (data.message) {
+                html += `<p><em class="stats_doctor-empty">${data.message}</em></p>`;
+                container.innerHTML = html;
+                return;
+            }
+
+            if (data.truong_khoa) {
+                html += `
+                    <h3 class="stats_doctor-subtitle">👨‍⚕️ Trưởng khoa</h3>
+                    <div class="stats_doctor-box">
+                        <p><strong>Họ tên:</strong> ${data.truong_khoa.full_name}</p>
+                        <p><strong>Email:</strong> ${data.truong_khoa.email}</p>
+                        <p><strong>Giới tính:</strong> ${data.truong_khoa.gender}</p>
+                        <p><strong>Ngày sinh:</strong> ${data.truong_khoa.birth_date || "Chưa cập nhật"}</p>
+                    </div>
+                `;
+            } else {
+                html += `<p><em class="stats_doctor-empty">Chưa có trưởng khoa.</em></p>`;
+            }
+
+            if (Array.isArray(data.bac_si) && data.bac_si.length > 0) {
+                html += `<h3 class="stats_doctor-subtitle">🩺 Danh sách bác sĩ</h3>`;
+                data.bac_si.forEach(bs => {
+                    html += `
+                        <div class="stats_doctor-box">
+                            <p><strong>Họ tên:</strong> ${bs.full_name}</p>
+                            <p><strong>Email:</strong> ${bs.email}</p>
+                            <p><strong>Giới tính:</strong> ${bs.gender}</p>
+                            <p><strong>Ngày sinh:</strong> ${bs.birth_date || "Chưa cập nhật"}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                html += `<p><em class="stats_doctor-empty">Không có bác sĩ nào trong khoa này.</em></p>`;
+            }
+
+            container.innerHTML = html;
+        } catch (err) {
+            document.getElementById("stats_doctor-data").innerHTML = `<p class="stats_doctor-error">⚠️ Lỗi khi tải dữ liệu.</p>`;
+            console.error("Lỗi:", err);
+        }
+    }
+
+    loadStaff();
+</script>
+{% endblock %}

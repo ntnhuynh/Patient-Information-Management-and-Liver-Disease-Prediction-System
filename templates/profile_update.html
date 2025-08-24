@@ -1,0 +1,107 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+
+
+<div class="profile_update-wrapper">
+    <h2 class="profile_update-title">
+        <img src="/static/img/problem.png" alt="Ảnh đại diện" class="profile_update-avatar">
+        Cập nhật hồ sơ cá nhân
+    </h2>
+
+    <form id="profile_update-form" class="profile_update-form">
+        <div class="profile_update-group">
+            <label for="full_name">Họ tên</label>
+            <input type="text" id="full_name" name="full_name" required>
+        </div>
+
+        <div class="profile_update-group">
+            <label for="gender">Giới tính</label>
+            <select id="gender" name="gender">
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+            </select>
+        </div>
+
+        <div class="profile_update-group">
+            <label for="birth_date">Ngày sinh</label>
+            <input type="date" id="birth_date" name="birth_date" required>
+        </div>
+
+        <div class="profile_update-actions">
+            <button type="submit" class="btn profile_update-save"><i class="fas fa-save"></i> Lưu thay đổi</button>
+            <a href="/profile/view" class="btn profile_update-cancel"><i class="fas fa-arrow-left"></i> Quay về hồ
+                sơ</a>
+        </div>
+    </form>
+</div>
+<script>
+    async function loadProfile() {
+        try {
+            const res = await fetch("/auth/profile");
+
+            if (!res.ok) throw new Error("Không thể tải hồ sơ");
+
+            const user = await res.json();
+            document.getElementById("full_name").value = user.full_name || "";
+            document.getElementById("gender").value = user.gender || "Nam";
+            document.getElementById("birth_date").value = user.birth_date || "";
+        } catch (err) {
+            alert("Lỗi khi tải dữ liệu người dùng.");
+        }
+    }
+
+    document.getElementById("profile_update-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const fullName = document.getElementById("full_name").value.trim();
+        const gender = document.getElementById("gender").value;
+        const birthDate = document.getElementById("birth_date").value;
+
+        const nameRegex = /^[a-zA-ZÀ-ỹ\s]+$/u;
+        if (!nameRegex.test(fullName)) {
+            alert("❌ Họ tên không được chứa ký tự đặc biệt hoặc số.");
+            return;
+        }
+
+        const wordCount = fullName.split(/\s+/).length;
+        if (wordCount < 2) {
+            alert("❌ Họ tên phải có ít nhất 2 từ.");
+            return;
+        }
+
+        const today = new Date().toISOString().split("T")[0];
+        if (!birthDate || birthDate >= today) {
+            alert("❌ Ngày sinh phải là ngày trong quá khứ.");
+            return;
+        }
+
+        const formData = {
+            full_name: fullName,
+            gender: gender,
+            birth_date: birthDate
+        };
+
+        try {
+            const res = await fetch("/auth/update_profile", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!res.ok) throw new Error("Cập nhật thất bại");
+
+            alert("✅ Hồ sơ đã được cập nhật!");
+            window.location.href = "/profile/view";
+        } catch (err) {
+            alert("❌ Có lỗi xảy ra khi cập nhật.");
+            console.error(err);
+        }
+    });
+
+    loadProfile();
+</script>
+
+{% endblock %}

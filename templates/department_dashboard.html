@@ -1,0 +1,53 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<h2 class="department_dashboard-title">Trang Quản Lý</h2>
+<div class="department_dashboard-stats-grid">
+
+
+    <a href="/patients/{{khoa_id}}/staff" class="department_dashboard-stat-card department_dashboard-link">
+        <h3>Danh Sách Bệnh nhân</h3>
+        <p id="departmentTotalStaff">...</p>
+    </a>
+
+    <a href="/list_medical_share/{{user_id}}" class="department_dashboard-stat-card department_dashboard-link">
+        <h3>Danh sách hồ sơ được chia sẻ</h3>
+        <p id="departmentActiveDepartments">...</p>
+    </a>
+    <a href="/stats/khoa/{{khoa_id}}/view" class="department_dashboard-stat-card department_dashboard-link">
+        <h3>Thống kê bệnh nhân của khoa</h3>
+    </a>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const userId = {{ user_id | tojson
+    }};
+
+    fetch(`/medical-record/shared-records/count/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("departmentActiveDepartments").textContent = data.shared_record_count;
+        })
+        .catch(error => {
+            console.error("Lỗi khi lấy số lượng hồ sơ chia sẻ:", error);
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const khoaId = {{ khoa_id | tojson
+    }};
+
+    fetch(`/patient/patients/count/${khoaId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("departmentTotalStaff").textContent = data.patient_count;
+        })
+        .catch(error => {
+            console.error("Lỗi khi lấy số lượng bệnh nhân:", error);
+        });
+    });
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="patients_doctor_staff-wrapper">
+    <h2 id="patients_doctor_staff-title" class="patients_doctor_staff-title">Danh sách bệnh nhân...</h2>
+
+    <div class="patients_doctor_staff-search">
+        <input type="text" id="searchInput" placeholder="🔍 Tìm theo tên bệnh nhân..."
+            class="patients_doctor_staff-search-input">
+    </div>
+
+    <div id="patients_doctor_staff-data" class="patients_doctor_staff-card">Đang tải dữ liệu...</div>
+
+
+    <div class="patients_doctor_staff-actions">
+        <a href="/admin/dashboard" class="patients_doctor_staff-btn patients_doctor_staff-back">
+            <i class="fas fa-arrow-left"></i> Quay về trang chủ
+        </a>
+    </div>
+
+</div>
+
+<script>
+    let allPatients = [];
+
+    function formatDate(dateStr) {
+        if (!dateStr || typeof dateStr !== "string") return "—";
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return "—";
+        return date.toLocaleDateString("vi-VN");
+    }
+
+    async function loadPatients() {
+        try {
+
+            const res = await fetch(`/patient/created-by/{{ user_id }}`);
+            const container = document.getElementById("patients_doctor_staff-data");
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                container.innerHTML = `<p class="patients_doctor_staff-error">❌ ${errorData.error || "Lỗi không xác định."}</p>`;
+                return;
+            }
+
+            const data = await res.json();
+            allPatients = data.patients || [];
+
+            document.getElementById("patients_doctor_staff-title").textContent = `Danh sách bệnh nhân do bác sĩ {{ full_name }} tạo`;
+            renderPatients(allPatients);
+        } catch (err) {
+            document.getElementById("patients_doctor_staff-data").innerHTML = `<p class="patients_doctor_staff-error">Lỗi khi tải dữ liệu.</p>`;
+            console.error("Lỗi:", err);
+        }
+    }
+
+    function renderPatients(patients) {
+        const container = document.getElementById("patients_doctor_staff-data");
+        let html = "";
+
+        if (Array.isArray(patients) && patients.length > 0) {
+            html += `<h3 class="patients_doctor_staff-subtitle">Danh sách bệnh nhân</h3>`;
+            patients.forEach(p => {
+                html += `
+                    <div class="patients_doctor_staff-box">
+                        <p><strong>Họ tên:</strong> ${p.name}</p>
+                        <p><strong>Ngày sinh:</strong> ${p.birth_date ? formatDate(p.birth_date) : "Chưa cập nhật"}</p>
+                        <p><strong>Giới tính:</strong> ${p.gender}</p>
+                        <p><strong>Địa chỉ:</strong> ${p.address || "—"}</p>
+                        <p><strong>SĐT:</strong> ${p.phone || "—"}</p>
+
+                        <div class="patients_doctor_staff-links">
+                            <a href="/patients/${p.id}/detail" class="patients_doctor_staff-link">
+                                <img src="{{ url_for('static', filename='img/people.png') }}" alt="avatar" class="patients_doctor_staff-avatar">
+                                Xem chi tiết
+                            </a>
+
+                            <a href="/patients/${p.id}/update" class="patients_doctor_staff-link">
+                                <img src="{{ url_for('static', filename='img/refresh.png') }}" alt="avatar" class="patients_doctor_staff-avatar">
+                                Cập nhật
+                            </a>
+
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            html += `<p><em class="patients_doctor_staff-empty">Không có bệnh nhân nào được tạo bởi bác sĩ này.</em></p>`;
+        }
+
+        container.innerHTML = html;
+    }
+
+    document.getElementById("searchInput").addEventListener("input", function () {
+        const keyword = this.value.toLowerCase();
+        const filtered = allPatients.filter(p => p.name.toLowerCase().includes(keyword));
+        renderPatients(filtered);
+    });
+
+    loadPatients();
+</script>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="dashboard-container">
+        <h2>Trang Quản Lý</h2>
+
+        <div class="stat-card">
+            <a href="/create/department" class="admin_dashboard-stat-card admin_dashboard-link">
+                <h3>Thêm khoa</h3>
+                <p id="totalStaff">...</p>
+            </a>
+        </div>
+
+
+        <div class="stat-card">
+            <h3>Hồ sơ bệnh nhân</h3>
+            <p id="medical">...</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Nhân sự</h3>
+            <p id="total">...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/department/count")
+            .then(response => response.json())
+            .then(data => {
+                const totalStaffElement = document.getElementById("totalStaff");
+                totalStaffElement.textContent = data.total_departments;
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy số lượng hồ sơ:", error);
+            });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/medical-record/count")
+            .then(response => response.json())
+            .then(data => {
+                const medical_records = document.getElementById("medical");
+                medical_records.textContent = data.total_records;
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy số lượng khoa:", error);
+            });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/auth/count")
+            .then(response => response.json())
+            .then(data => {
+                const totaluser = document.getElementById("total");
+                totaluser.textContent = data.total_users;
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy số lượng nhân sự:", error);
+            });
+    });
+</script>
+
+
+
+{% endblock %}

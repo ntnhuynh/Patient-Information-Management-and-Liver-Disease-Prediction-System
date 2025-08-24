@@ -1,0 +1,40 @@
+<!-- templates/layout/base.html -->
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% if page_type in [ "department_head_medical", "doctor"] %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/medical_form.css') }}">
+    {% endif %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+
+<body>
+    <div class="wrapper"></div>
+    {% if page_type == "login" %}
+    {% include 'layout/header_login.html' %}
+    {% elif page_type == "register" %}
+    {% include 'layout/header_register.html' %}
+    {% elif page_type in ["admin", "profile", "change_password"] %}
+    {% include 'layout/header_admin.html' %}
+    {% elif page_type in ["department_head", "profile_department", "change_password_department",
+    "department_head_medical", "doctor", "department_head_list"] %}
+    {% include 'layout/header_department.html' %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+
+    </div>
+</body>
+<footer>
+    {% include 'layout/footer.html' %}
+</footer>
+
+
+</html>

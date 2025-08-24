@@ -1,0 +1,109 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<div class=" stats_department_monthly_container">
+
+    <div class="stats_department_header">
+        {% if page_type == "admin" %}
+        <a href="/create/department" class="stats_department">
+            <img src="/static/img/go-back-arrow.png" alt="Quay về">
+        </a>
+        {%else%}
+        <a href="/admin/dashboard" class="stats_department">
+            <img src="/static/img/go-back-arrow.png" alt="Quay về">
+        </a>
+        {% endif %}
+        <h2 class="stats_department_monthly_title">Thống kê bệnh nhân theo tháng</h2>
+    </div>
+
+    <div class="stats_department_monthly_filter">
+        <label for="stats_department_monthly_year_select">Chọn năm:</label>
+        <select id="stats_department_monthly_year_select">
+            {% for y in range(2020, current_year + 1) %}
+            <option value="{{ y }}" {% if y==current_year %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <canvas id="stats_department_monthly_chart" width="800" height="400"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const khoaId = {{ khoa_id | tojson }};
+
+
+    const chartCtx = document.getElementById("stats_department_monthly_chart").getContext("2d");
+    let chartInstance = null;
+
+    async function fetchStats(year) {
+        try {
+            const res = await fetch(`/stats/khoa/${khoaId}/monthly?year=${year}`);
+            const result = await res.json();
+
+            if (result.status === "success") {
+                updateChart(result.labels, result.data, result.khoa, result.year);
+            } else {
+                alert(result.error || "Không thể tải dữ liệu thống kê.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Lỗi kết nối đến máy chủ.");
+        }
+    }
+
+    function updateChart(labels, data, khoaName, year) {
+        const maxValue = Math.max(...data);
+        const rawStep = Math.ceil(maxValue / 10);
+        const stepSize = Math.max(1, Math.round(rawStep / 5) * 5);  // làm tròn về bội số 5
+
+        if (chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(chartCtx, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Số bệnh nhân - ${khoaName} (${year})`,
+                    data: data,
+                    borderColor: "#28a745",
+                    backgroundColor: "rgba(40,167,69,0.1)",
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "Số lượng bệnh nhân"
+                        },
+                        ticks: {
+                            stepSize: stepSize
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Tháng"
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    document.getElementById("stats_department_monthly_year_select").addEventListener("change", function () {
+        fetchStats(this.value);
+    });
+
+    fetchStats(document.getElementById("stats_department_monthly_year_select").value);
+</script>
+
+{% endblock %}

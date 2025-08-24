@@ -1,0 +1,138 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="patient_detail-wrapper">
+    <h2 id="patient_detail-title" class="patient_detail-title">Danh sách hồ sơ của bệnh nhân</h2>
+
+    <div class="patient_detail-search">
+        <input type="text" id="searchInput" placeholder="🔍 Tìm theo ngày khám (dd/mm/yyyy)..."
+            class="patient_detail-search-input">
+        {% if page_type != "admin" %}
+
+        <a href="/medical-records/{{ patient_id }}" class="patient_detail-btn patient_detail-add">
+            <i class="fas fa-plus"></i> Thêm hồ sơ
+        </a>
+        {%endif%}
+    </div>
+    <div id="patient_detail-info" class="patient_detail-card">
+        <!-- Thông tin bệnh nhân sẽ được render bằng JS -->
+    </div>
+
+    <table class="patient_detail-table" style="display: none;">
+        <thead>
+            <tr>
+                <th>Ngày khám</th>
+                <th>Lý do khám</th>
+                <th>Triệu chứng chính</th>
+                <th>Ghi chú</th>
+                <th class="action-header"></th>
+            </tr>
+        </thead>
+        <tbody id="patient_detail-records">
+            <!-- Hồ sơ sẽ được render bằng JS -->
+        </tbody>
+    </table>
+
+    <div id="record-buttons" class="record-buttons">
+        <!-- Nút xem chi tiết sẽ được render bằng JS -->
+    </div>
+
+    {% if page_type == "admin" %}
+    <button onclick="window.history.back()" class="btn-back">⬅ Quay về</button>
+    {% elif page_type == "department_head" %}
+    <div class="patient_detail-actions">
+        <a href="/patients/{{ khoa_id }}/staff" class="patient_detail-btn patient_detail-back">
+            <i class="fas fa-arrow-left"></i> Quay về trang trước
+        </a>
+    </div>
+    {% elif page_type == "doctor" %}
+    <div class="patient_detail-actions">
+        <a href="/patients_by_doctor/{{user_id}}/staff" class="patient_detail-btn patient_detail-back">
+            <i class="fas fa-arrow-left"></i> Quay về trang trước
+        </a>
+    </div>
+    {% endif %}
+
+
+    <script>
+        const patientId = {{ patient_id }};
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            if (isNaN(date)) return "—";
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+            const year = date.getFullYear();
+
+            return `${day}/${month}/${year}`;
+        }
+
+        document.getElementById("searchInput").addEventListener("input", function () {
+            const keyword = this.value.trim().toLowerCase();
+            const rows = document.querySelectorAll("#patient_detail-records tr");
+            rows.forEach(row => {
+                const dateText = row.querySelector("td").textContent.toLowerCase();
+                row.style.display = dateText.includes(keyword) ? "" : "none";
+            });
+        });
+
+        fetch(`/patient/detail/${patientId}`)
+            .then(res => res.json())
+            .then(data => {
+                const infoDiv = document.getElementById("patient_detail-info");
+                const patient = data.patient;
+                const records = data.records;
+
+                let html = `
+            <p><strong>Họ tên:</strong> ${patient.name}</p>
+            <p><strong>Ngày sinh:</strong> ${formatDate(patient.birth_date)}</p>
+            <p><strong>Giới tính:</strong> ${patient.gender}</p>
+            <p><strong>Địa chỉ:</strong> ${patient.address}</p>
+        `;
+
+                if (records.length === 0) {
+                    html += `<p style="color: #888; margin-top: 10px;">Bệnh nhân này chưa có hồ sơ nào.</p>`;
+                } else {
+                    html += `<p style="margin-top: 10px;"><strong>Số lượng hồ sơ:</strong> ${records.length}</p>`;
+                    document.querySelector(".patient_detail-table").style.display = "table";
+
+                    const tbody = document.getElementById("patient_detail-records");
+                    const btnContainer = document.getElementById("record-buttons");
+
+                    records.forEach(record => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td>${record.visit_date ? formatDate(record.visit_date) : "—"}</td>
+                            <td>${record.reason_for_visit || "—"}</td>
+                            <td>${record.main_symptoms || "—"}</td>
+                            <td>${record.progress_note || "—"}</td>
+                            <td class="patient_detail-actions">
+                                <a href="/medical-records_detail/${record.id}" class="patient_detail-btn patient_detail-view">
+                                    <img src="/static/img/people.png" alt="avatar" class="patient_detail-avatar">
+                                </a>
+                                {% if page_type != "admin" %}
+                                <a href="/medical-records_detail/${record.id}/edit" class="patient_detail-btn patient_detail-update">
+                                    <img src="/static/img/refresh.png" alt="avatar" class="patient_detail-avatar">
+                                </a>
+                                <a href="/medical-records_detail/${record.id}/share" class="patient_detail-btn patient_detail-share">
+                                    <img src="/static/img/share.png" alt="avatar" class="patient_detail-avatar">
+                                </a>
+                                <a href="/predict/${record.id}" class="patient_detail-btn patient_detail-predict">
+                                    <img src="/static/img/predictive.png" alt="avatar" class="patient_detail-avatar">
+                                </a>
+                                {%endif%}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+
+                    });
+
+                }
+
+                infoDiv.innerHTML = html;
+            })
+            .catch(err => {
+                document.getElementById("patient_detail-info").innerHTML = "<p>Lỗi khi tải dữ liệu.</p>";
+                console.error(err);
+            });
+    </script>
+    {% endblock %}

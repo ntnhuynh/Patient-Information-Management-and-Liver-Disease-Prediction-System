@@ -1,0 +1,136 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="stats_doctor-wrapper">
+    <h2 id="stats_doctor-title" class="stats_doctor-title">Danh sách bệnh nhân...</h2>
+
+    <div class="stats_doctor-search">
+        <input type="text" id="searchInput" placeholder="🔍 Tìm theo tên bệnh nhân..."
+            class="stats_doctor-search-input">
+    </div>
+
+    <div id="stats_patient-data" class="stats_doctor-card">Đang tải dữ liệu...</div>
+
+    {% if page_type == "admin" %}
+    <div class="stats_doctor-actions">
+        <a href="/create/department" class="stats_doctor-btn stats_doctor-back">
+            <i class="fas fa-arrow-left"></i> Quay về danh sách khoa
+        </a>
+    </div>
+    {% elif page_type == "department_head" %}
+    <div class="stats_doctor-actions">
+        <a href="/admin/dashboard" class="stats_doctor-btn stats_doctor-back">
+            <i class="fas fa-arrow-left"></i> Quay về danh sách khoa
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    let allPatients = [];
+    let originalDepartmentName = "";
+    function formatDate(dateStr) {
+        if (!dateStr || typeof dateStr !== "string") return "—";
+
+        const cleanStr = dateStr.trim();
+        const parts = cleanStr.split("-"); // Tách theo dấu gạch ngang
+
+        if (parts.length !== 3) return "—";
+
+        const [day, month, year] = parts.map(p => parseInt(p, 10));
+        if (!day || !month || !year) return "—";
+
+        const date = new Date(year, month - 1, day); // Tháng bắt đầu từ 0
+        if (isNaN(date.getTime())) return "—";
+
+        const formattedDay = String(date.getDate()).padStart(2, '0');
+        const formattedMonth = String(date.getMonth() + 1).padStart(2, '0');
+        const formattedYear = date.getFullYear();
+
+        return `${formattedDay}/${formattedMonth}/${formattedYear}`;
+    }
+
+    async function loadPatients() {
+        try {
+            const pathParts = window.location.pathname.split('/');
+            const khoaId = pathParts[pathParts.indexOf('patients') + 1];
+
+            const res = await fetch(`/patient/list/${khoaId}/patients`);
+            const container = document.getElementById("stats_patient-data");
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                container.innerHTML = `<p class="stats_doctor-error">❌ ${errorData.error || "Lỗi không xác định."}</p>`;
+                return;
+            }
+
+            const data = await res.json();
+            allPatients = data.patients || [];
+            originalDepartmentName = data.department_name;
+            console.log(data)
+            document.getElementById("stats_doctor-title").textContent = `Danh sách bệnh nhân ${originalDepartmentName}`;
+            renderPatients(allPatients, data.pagination);
+        } catch (err) {
+            document.getElementById("stats_patient-data").innerHTML = `<p class="stats_doctor-error">Lỗi khi tải dữ liệu.</p>`;
+            console.error("Lỗi:", err);
+        }
+    }
+
+    function renderPatients(patients, pagination) {
+        const container = document.getElementById("stats_patient-data");
+        let html = "";
+
+        if (Array.isArray(patients) && patients.length > 0) {
+            html += `<h3 class="stats_doctor-subtitle">Danh sách bệnh nhân</h3>`;
+            patients.forEach(p => {
+                html += `
+                        <div class="stats_doctor-box">
+                            <p><strong>Họ tên:</strong> ${p.name}</p>
+                            <p><strong>Ngày sinh:</strong> ${p.birth_date ? formatDate(p.birth_date) : "Chưa cập nhật"}</p>
+                            <p><strong>Giới tính:</strong> ${p.gender}</p>
+                            <p><strong>Địa chỉ:</strong> ${p.address}</p>
+                            <p><strong>Bác sĩ phụ trách:</strong> ${p.doctor_name}</p>
+
+                            <div class="stats_doctor-links">
+                                <a href="/patients/${p.id}/detail" class="stats_doctor-link">
+                                    <img src="{{ url_for('static', filename='img/people.png') }}" alt="avatar" class="stats_doctor-avatar">
+
+                                    Xem chi tiết
+                                </a>
+                                {% if page_type == "department head" %}
+                                <a href="/patients/${p.id}/update" class="stats_doctor-link">
+                                    <img src="{{ url_for('static', filename='img/refresh.png') }}" alt="avatar" class="stats_doctor-avatar">
+
+                                    Cập nhật
+                                </a>
+                                {%endif%}
+                            </div>
+
+                        </div>
+                `;
+            });
+        } else {
+            html += `<p><em class="stats_doctor-empty">Không có bệnh nhân nào trong khoa này.</em></p>`;
+        }
+
+        if (pagination) {
+            html += `
+                <div class="stats_doctor-pagination">
+                    <p><strong>Trang:</strong> ${pagination.page} / ${pagination.total_pages}</p>
+                    <p><strong>Tổng số bệnh nhân:</strong> ${pagination.total_items}</p>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
+    }
+
+    document.getElementById("searchInput").addEventListener("input", function () {
+        const keyword = this.value.toLowerCase();
+        const filtered = allPatients.filter(p => p.name.toLowerCase().includes(keyword));
+        renderPatients(filtered, null);
+    });
+
+    loadPatients();
+</script>
+{% endblock %}

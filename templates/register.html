@@ -1,0 +1,196 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="register-container">
+    <h2>Đăng ký tài khoản</h2>
+    <form id="registerForm">
+        <div class="input-group">
+            <input type="text" name="username" placeholder="Tên đăng nhập">
+            <img src="../static/img/warning.png" alt="Error icon" class="error-icon" id="usernameError"
+                title="Username không hợp lệ" />
+        </div>
+
+        <div class="input-group">
+            <input type="text" name="email" placeholder="Email" />
+            <img src="../static/img/warning.png" alt="Error icon" class="error-icon" id="emailError"
+                title="Email không hợp lệ" />
+        </div>
+
+        <div class="input-group">
+            <input type="password" name="password" placeholder="Mật khẩu">
+            <img src="../static/img/warning.png" alt="Error icon" class="error-icon" id="passwordError"
+                title="Mật khẩu không hợp lệ" />
+        </div>
+
+        <div class="input-group">
+            <input type="text" name="full_name" placeholder="Họ và tên" />
+            <img src="../static/img/warning.png" alt="Error icon" class="error-icon" id="full_nameError"
+                title="Tên không hợp lệ" />
+        </div>
+
+        <div class="input-group">
+            <input type="text" name="birth_date" placeholder="Ngày sinh (dd/mm/yyyy)">
+            <img src="../static/img/warning.png" alt="Error icon" class="error-icon" id="birth_dateError"
+                title="Ngày sinh không hợp lệ" />
+        </div>
+
+        <div class="select-group">
+            <select name="gender">
+                <option value="">Giới tính</option>
+                <option value="nam">Nam</option>
+                <option value="nữ">Nữ</option>
+            </select>
+
+            <select name="role" required>
+                <option value="">Vai trò</option>
+                <option value="doctor">Bác sĩ</option>
+                <option value="department head">Trưởng khoa</option>
+            </select>
+        </div>
+
+        <select name="khoa_id" required>
+            <option value="">Chọn khoa</option>
+            {% for khoa in departments %}
+            <option value="{{ khoa.id }}">{{ khoa.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Đăng ký</button>
+    </form>
+
+    <div id="message"></div>
+</div>
+<script>
+
+    function showError(fieldId, message) {
+        const icon = document.getElementById(fieldId + "Error");
+        icon.setAttribute("title", message);
+        icon.style.visibility = "visible";
+    }
+
+    function clearError(fieldId) {
+        const icon = document.getElementById(fieldId + "Error");
+        icon.setAttribute("title", "");
+        icon.style.visibility = "hidden";
+    }
+
+
+    // Kiểm tra tên đăng nhập
+    document.querySelector("[name='username']").addEventListener("blur", function (e) {
+        const val = e.target.value.trim();
+        const regex = /^[a-zA-Z0-9_]{8,}$/;
+        if (!regex.test(val)) {
+            showError("username", "Tên đăng nhập phải ≥ 8 ký tự, chỉ gồm chữ, số, dấu '_'");
+        } else {
+            clearError("username");
+        }
+    });
+
+    // Kiểm tra email
+    document.querySelector("[name='email']").addEventListener("blur", function (e) {
+        const val = e.target.value.trim();
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!regex.test(val)) {
+            showError("email", "Email không hợp lệ");
+        } else {
+            clearError("email");
+        }
+    });
+
+    // Kiểm tra mật khẩu
+    document.querySelector("[name='password']").addEventListener("blur", function (e) {
+        const val = e.target.value;
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!regex.test(val)) {
+            showError("password", "Mật khẩu phải ≥ 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt");
+        } else {
+            clearError("password");
+        }
+    });
+    //Kiểm tra fullname
+    document.querySelector("[name='full_name']").addEventListener("blur", function (e) {
+        const val = e.target.value;
+        const regex = /^[a-zA-ZÀ-ỹ\s]+$/u;
+        if (!regex.test(val)) {
+            showError("full_name", "Họ tên không được chứa ký tự đặc biệt hoặc số.");
+        } else {
+            clearError("full_name");
+        }
+    });
+    // Kiểm tra ngày sinh
+    document.querySelector("[name='birth_date']").addEventListener("blur", function (e) {
+        const val = e.target.value.trim();
+        const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+
+        if (!regex.test(val)) {
+            showError("birth_date", "Ngày sinh phải đúng định dạng dd/mm/yyyy");
+            return;
+        }
+
+        // Kiểm tra ngày có thực sự tồn tại
+        const [day, month, year] = val.split("/").map(Number);
+        const date = new Date(year, month - 1, day);
+        if (
+            date.getFullYear() !== year ||
+            date.getMonth() !== month - 1 ||
+            date.getDate() !== day
+        ) {
+            showError("birth_date", "Ngày sinh không hợp lệ");
+        } else {
+            clearError("birth_date");
+        }
+    });
+    // Di chuyển xuống trường kế tiếp khi nhấn Enter
+    document.querySelectorAll("#registerForm input, #registerForm select").forEach((el, index, list) => {
+        el.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault(); // Ngăn submit form
+
+                // Tìm trường kế tiếp
+                let next = list[index + 1];
+                while (next && next.disabled) {
+                    index++;
+                    next = list[index + 1];
+                }
+
+                if (next) {
+                    next.focus();
+                } else {
+                    // Nếu không còn trường nào, focus vào nút submit
+                    document.querySelector("#registerForm button[type='submit']").focus();
+                }
+            }
+        });
+    });
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
+        // e.preventDefault(); // Ngăn reload trang
+
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => data[key] = value);
+
+        fetch("/auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(result => {
+                document.getElementById("message").innerText = result.msg || "Đăng ký thành công!";
+                document.getElementById("message").style.color = "green";
+                document.getElementById("registerForm").reset();
+            })
+            .catch(err => {
+                document.getElementById("message").innerText = "Có lỗi xảy ra khi đăng ký.";
+                document.getElementById("message").style.color = "red";
+                console.error(err);
+            });
+    });
+    document.getElementById("registerForm").reset();
+
+</script>
+
+
+{% endblock %}

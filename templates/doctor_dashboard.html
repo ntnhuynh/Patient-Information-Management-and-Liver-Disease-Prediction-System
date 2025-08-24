@@ -1,0 +1,53 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="doctor_dashboard-container">
+    <h2 class="doctor_dashboard-title">Trang Quản Lý</h2>
+
+    <div class="doctor_dashboard-grid">
+        <div class="doctor_dashboard-row">
+            <a href="/patients_by_doctor/{{user_id}}/staff" class="doctor_dashboard-card">
+                <h3>Danh Sách Bệnh nhân</h3>
+                <p class="doctor_dashboard-number" id="doctorTotalPatients">...</p>
+            </a>
+
+            <a href="/list_medical_share/{{user_id}}" class="doctor_dashboard-card">
+                <h3>Danh sách hồ sơ được chia sẻ</h3>
+                <p class="doctor_dashboard-number" id="doctorSharedRecords">...</p>
+            </a>
+        </div>
+    </div>
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const userId = {{ user_id | tojson
+        }};
+
+        fetch(`/patient/count-by-creator/{{user_id}}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("doctorTotalPatients").textContent = data.patient_count;
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy số lượng bệnh nhân:", error);
+            });
+    });
+        document.addEventListener("DOMContentLoaded", function () {
+            const userId = {{ user_id | tojson
+        }};
+
+        fetch(`/medical-record/shared-records/count/${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("doctorSharedRecords").textContent = data.shared_record_count;
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy số lượng hồ sơ chia sẻ:", error);
+            });
+    });
+    </script>
+
+
+    {% endblock %}

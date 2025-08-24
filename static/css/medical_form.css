@@ -1,0 +1,83 @@
+body,
+input,
+textarea,
+select,
+button {
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+    font-size: 15px;
+    color: #2c3e50;
+}
+
+.medical-form-wrapper {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.medical-form-title {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #5598db;
+}
+
+.medical-form fieldset {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    background-color: #fff;
+}
+
+.medical-form legend {
+    font-weight: bold;
+    font-size: 18px;
+    color: #34495e;
+    padding: 0 10px;
+}
+
+.medical-form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 500;
+    color: #333;
+}
+
+.medical-form input[type="text"],
+.medical-form input[type="date"],
+.medical-form input[type="number"],
+.medical-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.medical-form textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.medical-form-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #3498db;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.medical-form-btn:hover {
+    background-color: #2980b9;
+}

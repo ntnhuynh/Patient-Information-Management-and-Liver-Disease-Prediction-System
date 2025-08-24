@@ -1,0 +1,151 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="medical-form-wrapper">
+    <h2 class="medical-form-title">Tạo hồ sơ bệnh án mới</h2>
+    <form id="recordForm" class="medical-form">
+        <!-- Thông tin khám -->
+        <fieldset>
+            <legend>Thông tin khám</legend>
+            <label>Ngày khám *</label>
+            <input type="date" name="visit_date" id="visit_date" required max="{{ current_date }}">
+
+
+            <label>Lý do khám *</label>
+            <textarea name="reason_for_visit" required></textarea>
+
+            <label>Triệu chứng chính *</label>
+            <textarea name="main_symptoms" required></textarea>
+
+            <label>Thời điểm khởi phát *</label>
+            <input type="text" name="onset_time" required>
+
+            <label>Ghi chú</label>
+            <input type="text" name="progress_note">
+        </fieldset>
+
+        <!-- Khám lâm sàng -->
+        <fieldset>
+            <legend>Khám lâm sàng</legend>
+            <input type="text" name="blood_pressure" placeholder="Huyết áp">
+            <input type="text" name="heart_rate" placeholder="Nhịp tim">
+            <input type="text" name="temperature" placeholder="Nhiệt độ">
+            <input type="text" name="respiratory_rate" placeholder="Nhịp thở">
+            <input type="text" name="weight" placeholder="Cân nặng">
+            <input type="text" name="height" placeholder="Chiều cao">
+            <textarea name="exam_cardio" placeholder="Khám tim mạch"></textarea>
+            <textarea name="exam_respiratory" placeholder="Khám hô hấp"></textarea>
+            <textarea name="exam_digestive" placeholder="Khám tiêu hóa"></textarea>
+            <textarea name="exam_neuro" placeholder="Khám thần kinh"></textarea>
+            <textarea name="exam_skin" placeholder="Khám da liễu"></textarea>
+        </fieldset>
+
+        <!-- Cận lâm sàng -->
+        <fieldset>
+            <legend>Cận lâm sàng</legend>
+            <textarea name="orders" placeholder="Chỉ định xét nghiệm"></textarea>
+            <textarea name="result_summary" placeholder="Tóm tắt kết quả"></textarea>
+            <input type="number" step="any" name="total_bilirubin" placeholder="Total Bilirubin">
+            <input type="number" step="any" name="direct_bilirubin" placeholder="Direct Bilirubin">
+            <input type="number" step="any" name="alkaline_phosphotase" placeholder="Alkaline Phosphotase">
+            <input type="number" step="any" name="alamine_aminotransferase" placeholder="ALT">
+            <input type="number" step="any" name="aspartate_aminotransferase" placeholder="AST">
+            <input type="number" step="any" name="total_proteins" placeholder="Total Proteins">
+            <input type="number" step="any" name="albumin" placeholder="Albumin">
+            <input type="number" step="any" name="albumin_globulin_ratio" placeholder="Albumin/Globulin Ratio">
+        </fieldset>
+
+        <!-- Chẩn đoán -->
+        <fieldset>
+            <legend>Chẩn đoán</legend>
+            <textarea name="preliminary_diagnosis" placeholder="Chẩn đoán sơ bộ"></textarea>
+            <textarea name="confirmed_diagnosis" placeholder="Chẩn đoán xác định"></textarea>
+        </fieldset>
+
+        <!-- Kế hoạch điều trị -->
+        <fieldset>
+            <legend>Kế hoạch điều trị</legend>
+            <textarea name="medications" placeholder="Thuốc điều trị"></textarea>
+            <textarea name="procedures" placeholder="Thủ thuật / can thiệp"></textarea>
+            <textarea name="follow_up_instructions" placeholder="Hướng dẫn tái khám"></textarea>
+            <input type="date" name="follow_up_date" placeholder="Ngày tái khám">
+        </fieldset>
+
+        <!-- Tóm tắt xuất viện -->
+        <fieldset>
+            <legend>Tóm tắt xuất viện</legend>
+            <input type="date" name="admission_date" placeholder="Ngày nhập viện">
+            <input type="date" name="discharge_date" placeholder="Ngày xuất viện">
+            <textarea name="discharge_diagnosis" placeholder="Chẩn đoán khi xuất viện"></textarea>
+            <input type="text" name="treatment_outcome" placeholder="Kết quả điều trị">
+            <textarea name="post_discharge_instructions" placeholder="Hướng dẫn sau xuất viện"></textarea>
+        </fieldset>
+
+        <button type="submit" class="medical-form-btn">Tạo hồ sơ</button>
+    </form>
+</div>
+
+<script>
+    const patientId = {{ patient_id }};
+    const departmentId = {{ khoa_id }};
+
+    document.getElementById("recordForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const visitDate = document.getElementById("visit_date").value;
+        const today = new Date().toISOString().split("T")[0];
+
+        if (!visitDate || visitDate > today) {
+            alert("Ngày khám không hợp lệ. Vui lòng chọn ngày hôm nay hoặc trước đó.");
+            return;
+        }
+
+        const formData = new FormData(this);
+        let rawData = Object.fromEntries(formData.entries());
+
+        // Chuyển các chỉ số xét nghiệm sang số hoặc null
+        const labFields = [
+            "total_bilirubin", "direct_bilirubin", "alkaline_phosphotase",
+            "alamine_aminotransferase", "aspartate_aminotransferase",
+            "total_proteins", "albumin", "albumin_globulin_ratio"
+        ];
+
+        labFields.forEach(field => {
+            const value = rawData[field];
+            rawData[field] = value ? parseFloat(value) : null;
+        });
+
+        // Thêm patient_id và department_id
+        rawData.patient_id = patientId;
+        rawData.department_id = departmentId;
+
+        // Lọc bỏ các trường không có giá trị ("" hoặc null)
+        const data = Object.fromEntries(
+            Object.entries(rawData).filter(([_, value]) => value !== "" && value !== null)
+        );
+
+        // console.log("Dữ liệu gửi đi:", data);
+
+        fetch("/medical-record/add_medical-records", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(result => {
+                if (result.record_id) {
+                    alert("Tạo hồ sơ thành công!");
+                    window.location.href = `/medical-records/${patientId}`;
+                } else {
+                    alert("Lỗi: " + result.error);
+                }
+            })
+            .catch(err => {
+                alert("Lỗi hệ thống.");
+                console.error(err);
+            });
+    });
+</script>
+
+
+{% endblock %}

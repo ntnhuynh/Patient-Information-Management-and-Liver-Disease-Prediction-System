@@ -1,0 +1,141 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="medical-share-wrapper">
+    <h2 class="medical-share-title">🔗 Chia sẻ hồ sơ bệnh án {{ record_id }}</h2>
+
+    <div class="medical-share-step">
+        <label for="department-select"><strong>Chọn khoa:</strong></label>
+        <select id="department-select" class="medical-share-select">
+            <option value="">-- Chọn khoa --</option>
+        </select>
+    </div>
+
+    <div class="medical-share-step">
+        <label for="doctor-search"><strong>Tìm bác sĩ:</strong></label>
+        <input type="text" id="doctor-search" class="medical-share-input" placeholder="Nhập tên hoặc email bác sĩ...">
+    </div>
+
+    <div id="doctor-list" class="medical-share-doctor-list">
+        <!-- Danh sách bác sĩ sẽ được render ở đây -->
+    </div>
+
+    <div class="medical-share-actions">
+        <button id="share-button" class="medical-share-btn" disabled>✅ Chia sẻ hồ sơ</button>
+        {%if page_type == "department_head"%}
+        <button class="medical-share-btn medical-share-back" onclick="window.history.back()">
+            ⬅ Quay lại hồ sơ
+        </button>
+
+
+        {%elif page_type == "doctor"%}
+        <a href="/patients_by_doctor/{{user_id}}/staff" class="medical-share-btn medical-share-back">⬅ Quay lại danh
+            sách</a>
+        {%endif%}
+    </div>
+
+    <script>
+        const recordId = {{ record_id }};
+        let allDoctors = [];
+        let selectedDoctorId = null;
+
+        // Load danh sách khoa
+        fetch("/department/list")
+            .then(res => res.json())
+            .then(departments => {
+                const select = document.getElementById("department-select");
+                departments.forEach(dept => {
+                    const option = document.createElement("option");
+                    option.value = dept.id;
+                    option.textContent = dept.name;
+                    select.appendChild(option);
+                });
+            });
+
+        // Khi chọn khoa → load danh sách bác sĩ
+        document.getElementById("department-select").addEventListener("change", function () {
+            const khoaId = this.value;
+            if (!khoaId) return;
+
+            fetch(`/stats/departments/${khoaId}/staff`)
+                .then(res => res.json())
+                .then(data => {
+                    allDoctors = [];
+
+                    if (data.truong_khoa) {
+                        allDoctors.push(data.truong_khoa);
+                    }
+                    if (Array.isArray(data.bac_si)) {
+                        allDoctors = allDoctors.concat(data.bac_si);
+                    }
+
+                    renderDoctorList(allDoctors);
+                });
+        });
+
+        // Tìm kiếm bác sĩ
+        document.getElementById("doctor-search").addEventListener("input", function () {
+            const keyword = this.value.toLowerCase();
+            const filtered = allDoctors.filter(d =>
+                d.full_name.toLowerCase().includes(keyword) ||
+                d.email.toLowerCase().includes(keyword)
+            );
+            renderDoctorList(filtered);
+        });
+
+        // Render danh sách bác sĩ
+        function renderDoctorList(doctors) {
+            const container = document.getElementById("doctor-list");
+            container.innerHTML = "";
+
+            if (doctors.length === 0) {
+                container.innerHTML = "<p>Không tìm thấy bác sĩ nào.</p>";
+                return;
+            }
+
+            doctors.forEach(doc => {
+                const div = document.createElement("div");
+                div.className = "medical-share-doctor-item";
+                div.innerHTML = `
+          <label>
+            <input type="radio" name="doctor" value="${doc.id}">
+            <strong>${doc.full_name}</strong> (${doc.email})
+          </label>
+        `;
+                container.appendChild(div);
+            });
+
+            // Gắn sự kiện chọn bác sĩ
+            document.querySelectorAll('input[name="doctor"]').forEach(input => {
+                input.addEventListener("change", function () {
+                    selectedDoctorId = this.value;
+                    document.getElementById("share-button").disabled = false;
+                });
+            });
+
+            document.getElementById("share-button").disabled = true;
+            selectedDoctorId = null;
+        }
+
+        // Gửi yêu cầu chia sẻ
+        document.getElementById("share-button").addEventListener("click", function () {
+            if (!selectedDoctorId) return;
+
+            fetch(`/medical-record/medical-records/${recordId}/share`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ shared_with: selectedDoctorId })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message) {
+                        alert("✅ Hồ sơ đã được chia sẻ!");
+
+                    } else {
+                        alert("❌ " + (data.error || "Lỗi không xác định"));
+                    }
+                });
+        });
+    </script>
+</div>
+{% endblock %}
