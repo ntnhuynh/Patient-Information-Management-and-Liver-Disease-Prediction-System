@@ -96,6 +96,11 @@ def predict_disease(record_id):
         "albumin_globulin_ratio": record.albumin_globulin_ratio
     }
 
+    info_medical = {
+        "Ngày khám": record.visit_date.strftime('%d/%m/%Y') if record.visit_date else None,
+        "Triệu chứng": record.reason_for_visit,
+        "Triệu chứng chính": record.main_symptoms
+    }
     missing_fields = [key for key, value in required_fields.items() if value is None]
     if missing_fields:
         return jsonify({
@@ -132,10 +137,10 @@ def predict_disease(record_id):
                 "id": patient.id,
                 "full_name": patient.name,
                 "gender": patient.gender,
-                "birth_date": patient.birth_date.isoformat(),
+                "birth_date": patient.birth_date.strftime('%d/%m/%Y'),
                 "age": age
             },
-            "lab_values": required_fields
+            "lab_values": info_medical
         }), 200
 
     except Exception as e:

@@ -20,7 +20,12 @@
 </div>
 
 <script>
-
+    function formatDate(dateStr) {
+        if (!dateStr || typeof dateStr !== "string") return "—";
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return "—";
+        return date.toLocaleDateString("vi-VN");
+    }
     document.addEventListener("DOMContentLoaded", function () {
         const resultBox = document.querySelector(".predict-result");
         const loadingBox = document.querySelector(".predict-loading");
@@ -52,7 +57,7 @@
                         <li>Ngày sinh: ${info.birth_date}</li>
                     </ul>
                     <hr>
-                    <h3 class="predict-subtitle">Chỉ số xét nghiệm</h3>
+                    <h3 class="predict-subtitle">Thông tin khám ban đầu</h3>
                     <ul class="predict-labs">
                         ${Object.entries(labs).map(([key, val]) => `<li>${key}: ${val}</li>`).join("")}
                     </ul>
